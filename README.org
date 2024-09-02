@@ -1,0 +1,41 @@
+* Emacs Theme Switcher
+[[./theme-switcher.gif]]
+
+This package provides 2 features:
+- a convenient interface for switching between themes.
+- a way to provide dark mode versions of inline images in org mode.
+
+For example, if, in an org file, I link to an image using ~[[./image.png]]~, I can provide another version of the image suitable for dark mode and write it to ~./image-dark.png~. Having done this, when I toggle inline images (usually bound to ~C-c C-x C-v~), then if the current theme is a dark theme, the image displayed will be ~./image-dark.png~ and not ~./image.png~ (provided that said file exists). And if I then switch to a light theme, the inline images will be refreshed and ~./image.png~ will be displayed.
+* Installation/Setup
+Clone the repository in your preferred destination.
+#+begin_src sh
+  cd ~/path/to
+  git clone https://github.com/Duncan-Britt/theme-switcher.git
+#+end_src
+
+Add the following to your config, specifying the [[(path)][path]] to the cloned repository, as well as your preferred [[(light)][light]] and [[(dark)][dark]] themes.
+#+begin_src elisp
+  (add-to-list 'load-path "~/path/to/theme-switcher/") (ref:path)
+  (with-eval-after-load 'org
+    (require 'theme-switcher)
+    (ts-init)
+    (setq *theme-switcher-themes-light* '("ef-day" "leuven")) (ref:light)
+    (setq *theme-switcher-themes-dark* '("ef-elea-dark" "ef-cherie"))) (ref:dark)
+#+end_src
+
+/To find your available themes, you can use ~M-x customize-themes~./
+
+* Usage/Keybindings
+** Switching Themes
+Enter ~C-t~ to choose a theme in the mini buffer.
+
+If you'd like to change the default keybinding, you can [[(kbd)][specify]] your preferred keybinding when you initialize
+#+begin_src elisp
+  (with-eval-after-load 'org
+    (require 'theme-switcher)
+    (ts-init "C-c t")) (ref:kbd)
+#+end_src
+** Light and dark mode images
+To use this functionality, you first need to make your light and dark mode versions of your image and name them ~name.extension~ and ~name-dark.extension~, respectively. For example, I could have file ~directed-graph.png~ and ~directed-graph-dark.png~. They must be in the same directory.
+
+Then, in org mode, link to the file like so: ~[[path/to/directed-graph.png]]~. When you display inline images, if you are in dark mode, or switch to dark mode, ~directed-graph-dark.png~ will be displayed instead of ~directed-graph.png~.

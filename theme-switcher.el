@@ -38,36 +38,38 @@
     (concat dir name "-dark." ext)))              ; Concatenate to form the new path
 
 ;; Customizations
-(defcustom *themes-light* '("ef-day" "ef-light" "ef-kassio" "ef-frost" "ef-arbutus" "ef-melissa-light" "ef-maris-light" "ef-elea-light" "ef-summer" "ef-cyprus" "ef-reverie")
+(defvar *theme-switcher-themes-light* '("ef-day" "ef-light" "ef-kassio" "ef-frost" "ef-arbutus" "ef-melissa-light" "ef-maris-light" "ef-elea-light" "ef-summer" "ef-cyprus" "ef-reverie")
   "List of preferred light mode themes.")
 
-(defcustom *themes-dark* '("ef-trio-dark" "ef-rosa" "ef-winter" "ef-cherie" "ef-tritanopia-dark" "ef-elea-dark" "ef-dream" "ef-melissa-dark" "ef-owl")
+(defvar *theme-switcher-themes-dark* '("ef-trio-dark" "ef-rosa" "ef-winter" "ef-cherie" "ef-tritanopia-dark" "ef-elea-dark" "ef-dream" "ef-melissa-dark" "ef-owl")
   "List of preferred dark mode themes.")
 
-(defvar *themes-category* 'Dark
+;; Internal
+(defvar *theme-switcher-themes-category* 'Dark
   "Category of current theme: Either 'Light or 'Dark")
 
-;; Choose theme among themes I like
-(defun choose-theme ()
+(defun theme-switcher-choose-theme ()
   "Open a selection menu in the minibuffer."
   (interactive)
-  (let* ((all-themes `(("Light" . ,*themes-light*)
-                       ("Dark" . ,*themes-dark*)))
+  (let* ((all-themes `(("Light" . ,*theme-switcher-themes-light*)
+                       ("Dark" . ,*theme-switcher-themes-dark*)))
          (options '("Light" "Dark"))
          (brightness-selection (completing-read "Choose category: " options))         
          (themes (lookup brightness-selection all-themes))
          (theme-chosen (completing-read "Choose a theme:" themes)))
-    (setq *themes-category* (intern brightness-selection))    
+    (setq *theme-switcher-themes-category* (intern brightness-selection))
     (mapc #'disable-theme custom-enabled-themes)
     (load-theme (intern theme-chosen) t)
     (ts-refresh-inline-images)
     (message "Loaded %s" theme-chosen)))
 
-(global-set-key (kbd "C-t") 'choose-theme)
-
-(defun ts-init ()
-  (define-key org-mode-map (kbd "C-c C-x C-v") nil)  
-  (define-key org-mode-map (kbd "C-c C-x C-v") 'ts-toggle-inline-images))
+(defun ts-init (&optional kbd-main)
+  (define-key org-mode-map (kbd "C-c C-x C-v") nil)
+  (define-key org-mode-map (kbd "C-c C-x C-v") 'ts-toggle-inline-images)
+  (global-set-key (kbd (if kbd-main
+                           kbd-main
+                         "C-t"))
+                  'theme-switcher-choose-theme))
 
 (defun ts-refresh-inline-images ()
   "If displaying inline images, stop and restart display."
@@ -178,7 +180,7 @@ buffer boundaries with possible narrowing."
 			     (progn
                                (setq linktype (match-string 1))
                                (match-string 2))))))))
-              (when (and path (eq *themes-category* 'Dark)) ;; <-- Modifications to original: check if in dark mode and update path
+              (when (and path (eq *theme-switcher-themes-category* 'Dark)) ;; <-- Modifications to original: check if in dark mode and update path
                 (let ((new-path (insert-dark-before-extension path)))
                   (when (file-exists-p new-path)
                     (setq path new-path)))) ;; <-- end modifications
