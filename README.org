@@ -15,12 +15,16 @@ Clone the repository in your preferred destination.
 
 Add the following to your config, specifying the path to the cloned repository, as well as your preferred light and dark themes.
 #+begin_src elisp
-  (add-to-list 'load-path "~/path/to/theme-switcher/")
-  (with-eval-after-load 'org
-    (require 'theme-switcher)
-    (ts-init)
+  (use-package theme-switcher
+    :load-path "~/path/to/theme-switcher/"
+    :after org
+    :config
     (setq *theme-switcher-themes-light* '("ef-day" "leuven"))
-    (setq *theme-switcher-themes-dark* '("ef-elea-dark" "ef-cherie")))
+    (setq *theme-switcher-themes-dark* '("ef-elea-dark" "ef-cherie"))
+    :bind
+    ("C-t" . theme-switcher-choose-theme)
+    (:map org-mode-map
+          ("C-c C-x C-v" . ts-toggle-inline-images)))
 #+end_src
 
 /To find your available themes, you can use ~M-x customize-themes~./
@@ -28,13 +32,6 @@ Add the following to your config, specifying the path to the cloned repository, 
 * Usage/Keybindings
 ** Switching Themes
 Enter ~C-t~ to choose a theme in the mini buffer.
-
-If you'd like to change the default keybinding, you can specify your preferred keybinding when you initialize
-#+begin_src elisp
-  (with-eval-after-load 'org
-    (require 'theme-switcher)
-    (ts-init "C-c t"))
-#+end_src
 ** Light and dark mode images
 To use this functionality, you first need to make your light and dark mode versions of your image and name them ~name.extension~ and ~name-dark.extension~, respectively. For example, I could have files ~directed-graph.png~ and ~directed-graph-dark.png~. They must be in the same directory.
 

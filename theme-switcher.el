@@ -3,7 +3,7 @@
 ;; Copyright (C) 2024 Duncan Britt
 
 ;; Author: Duncan Britt <dbru997@gmail.com>
-;; Homepage: TODO
+;; Homepage: https://github.com/Duncan-Britt/theme-switcher
 ;; Keywords: Graphics,images,themes
 
 ;; Package-Version: 0.0.1
@@ -62,14 +62,6 @@
     (load-theme (intern theme-chosen) t)
     (ts-refresh-inline-images)
     (message "Loaded %s" theme-chosen)))
-
-(defun ts-init (&optional kbd-main)
-  (define-key org-mode-map (kbd "C-c C-x C-v") nil)
-  (define-key org-mode-map (kbd "C-c C-x C-v") 'ts-toggle-inline-images)
-  (global-set-key (kbd (if kbd-main
-                           kbd-main
-                         "C-t"))
-                  'theme-switcher-choose-theme))
 
 (defun ts-refresh-inline-images ()
   "If displaying inline images, stop and restart display."
